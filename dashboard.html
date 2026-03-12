@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h3>Welcome, {{ current_user.name }}</h3>
+<p>Total records: <strong>{{ total_records }}</strong></p>
+
+<h5>Recent records</h5>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Original name</th>
+      <th>Visit date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+      <tr>
+        <td>{{ r.file_type }}</td>
+        <td>{{ r.original_filename }}</td>
+        <td>{{ r.visit_date or '-' }}</td>
+        <td>
+          <a href="{{ url_for('view_record', record_id=r.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+          <a href="{{ url_for('download', record_id=r.id) }}" class="btn btn-sm btn-outline-secondary">Download</a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="4">No records yet. <a href="{{ url_for('upload') }}">Upload</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="mt-3">
+  <a href="{{ url_for('records') }}" class="btn btn-primary">View All Records</a>
+  <a href="{{ url_for('upload') }}" class="btn btn-success">Upload New Record</a>
+</div>
+{% endblock %}

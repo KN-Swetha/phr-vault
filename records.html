@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Records{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3>Your Medical Records</h3>
+
+<!-- FILTER SECTION -->
+
+<form class="row g-2 mb-4" method="get">
+
+<div class="col-md-2">
+<input type="text" name="q"
+value="{{ request.args.get('q','') }}"
+placeholder="Keyword"
+class="form-control">
+</div>
+
+<div class="col-md-2">
+<input type="text" name="doctor"
+value="{{ request.args.get('doctor','') }}"
+placeholder="Doctor"
+class="form-control">
+</div>
+
+<div class="col-md-2">
+<input type="text" name="hospital"
+value="{{ request.args.get('hospital','') }}"
+placeholder="Hospital"
+class="form-control">
+</div>
+
+<div class="col-md-2">
+<select name="type" class="form-select">
+<option value="">All types</option>
+<option value="Prescription">Prescription</option>
+<option value="Lab">Lab</option>
+<option value="Scan">Scan</option>
+<option value="Discharge">Discharge</option>
+<option value="Vaccination">Vaccination</option>
+</select>
+</div>
+
+
+
+<div class="col-md-2">
+<input type="date"
+name="to"
+value="{{ request.args.get('to','') }}"
+class="form-control">
+</div>
+
+<div class="col-md-12 mt-2">
+<button class="btn btn-secondary">Filter</button>
+<a href="{{ url_for('records') }}" class="btn btn-link">Clear</a>
+</div>
+
+</form>
+
+<!-- BUTTON SECTION -->
+
+<div class="mb-3">
+
+<form action="{{ url_for('export_zip') }}" method="post" id="zipForm" style="display:inline;">
+<button type="submit" class="btn btn-success btn-sm">
+Download selected as ZIP
+</button>
+</form>
+
+<a href="{{ url_for('upload') }}" class="btn btn-primary btn-sm">
+Upload new
+</a>
+
+</div>
+
+<!-- RECORD TABLE -->
+
+<table class="table table-striped table-bordered">
+
+<thead>
+
+<tr>
+
+<th>
+<input type="checkbox" id="select-all">
+</th>
+
+<th>Type</th>
+<th>File Name</th>
+<th>Doctor</th>
+<th>Hospital</th>
+<th>Visit Date</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for r in records %}
+
+<tr>
+
+<td>
+<input type="checkbox"
+name="record_ids"
+value="{{ r.id }}"
+form="zipForm">
+</td>
+
+<td>{{ r.file_type }}</td>
+
+<td>{{ r.original_filename }}</td>
+
+<td>{{ r.doctor_name or '-' }}</td>
+
+<td>{{ r.hospital_name or '-' }}</td>
+
+<td>
+{{ r.visit_date.strftime('%Y-%m-%d') if r.visit_date else '-' }}
+
+</td>
+
+
+<td>
+
+<a class="btn btn-sm btn-outline-primary"
+href="{{ url_for('view_record', record_id=r.id) }}">
+View </a>
+
+<a class="btn btn-sm btn-outline-secondary"
+href="{{ url_for('download', record_id=r.id) }}">
+Download </a>
+
+<form action="{{ url_for('delete_record', record_id=r.id) }}"
+method="post"
+class="d-inline"
+onsubmit="return confirm('Delete this record?');">
+
+<button type="submit" class="btn btn-sm btn-danger">
+Delete
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+{% else %}
+
+<tr>
+<td colspan="7" class="text-center">
+No records found
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+document.getElementById("select-all").addEventListener("change", function(e){
+
+let checked = e.target.checked;
+
+document.querySelectorAll('input[name="record_ids"]').forEach(function(cb){
+
+cb.checked = checked;
+
+});
+
+});
+
+</script>
+
+{% endblock %}

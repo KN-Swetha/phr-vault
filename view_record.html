@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}View Record{% endblock %}
+{% block content %}
+<h4>{{ rec.file_type }} — {{ rec.original_filename }}</h4>
+<p><strong>Doctor:</strong> {{ rec.doctor_name or '-' }}<br>
+<strong>Hospital:</strong> {{ rec.hospital_name or '-' }}<br>
+<strong>Visit date:</strong> {{ rec.visit_date or '-' }}<br>
+ <strong>Notes:</strong> {{ rec.notes or 'No notes available' }}<br> 
+
+<strong>Uploaded:</strong> {{ rec.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+<div class="mb-3">
+  <a class="btn btn-primary" href="{{ url_for('download', record_id=rec.id) }}">Download</a>
+  <a class="btn btn-secondary" href="{{ url_for('records') }}">Back</a>
+</div>
+
+{% if rec.original_filename.lower().endswith('.pdf') %}
+  <embed src="{{ url_for('download', record_id=rec.id) }}" type="application/pdf" width="100%" height="600px" />
+{% else %}
+  <img src="{{ url_for('download', record_id=rec.id) }}" alt="image" class="img-fluid" />
+{% endif %}
+{% endblock %}

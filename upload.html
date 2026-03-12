@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Upload Record{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h3 class="mb-4">Upload Medical Record</h3>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data">
+
+      <!-- FILE -->
+      <div class="mb-3">
+        <label class="form-label">Select file (pdf/png/jpg)</label>
+        <input type="file" name="file" class="form-control" required>
+      </div>
+
+      <!-- FILE TYPE -->
+      <div class="mb-3">
+        <label class="form-label">Type</label>
+        <select name="file_type" class="form-select" required>
+          <option value="">-- Select Type --</option>
+          <option value="Prescription">Prescription</option>
+          <option value="Lab">Lab</option>
+          <option value="Scan">Scan</option>
+          <option value="Discharge">Discharge</option>
+          <option value="Vaccination">Vaccination</option>
+        </select>
+      </div>
+
+      <!-- DOCTOR NAME -->
+      <div class="mb-3">
+        <label class="form-label">Doctor Name</label>
+        <input 
+          type="text" 
+          name="doctor_name" 
+          class="form-control"
+          pattern="[A-Za-z\s]{3,}$"
+          title="Doctor name must contain only letters and at least 3 characters"
+          required>
+      </div>
+
+      <!-- HOSPITAL NAME -->
+      <div class="mb-3">
+        <label class="form-label">Hospital / Clinic</label>
+        <input 
+          type="text" 
+          name="hospital_name" 
+          class="form-control"
+          pattern="[A-Za-z\s]{3,}"
+          title="Hospital name must contain only letters and at least 3 characters"
+          required>
+      </div>
+
+      <!-- VISIT DATE -->
+      <div class="mb-3">
+        <label class="form-label">Visit Date</label>
+        <input type="date" name="visit_date" class="form-control" required>
+      </div>
+
+      <!-- NOTES -->
+      <div class="mb-3">
+        <label class="form-label">Notes</label>
+        <textarea 
+          name="notes" 
+          class="form-control" 
+          rows="3"
+          minlength="5"
+          placeholder="Enter at least 5 characters"
+          required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Upload</button>
+      <a href="{{ url_for('records') }}" class="btn btn-secondary ms-2">Back to Records</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
